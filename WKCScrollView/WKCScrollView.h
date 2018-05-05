@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger,WKCScrollViewAutoScrollDirection) {
 @property (nonatomic, assign, readonly) BOOL isDragging;
 /**是否快减速*/
 @property (nonatomic, assign, readonly) BOOL isDecelerating;
-/**当前最末端坐标*/
+/**当前坐标*/
 @property (nonatomic, assign, readonly) NSInteger currentIndex;
 /**范围内的可视视图*/
 @property (nonatomic, strong, readonly) NSArray <UIView *>* visibleViews;

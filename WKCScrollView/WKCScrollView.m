@@ -108,10 +108,9 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
     if (!self.loopEnabled) [self initWithViewsIndex:0]; //直接初始化视图
 }
 
-#pragma mark  ------<初始化视图>------
+#pragma mark  ------<初始化视图>-------
 
 - (void)initWithViewsIndex:(NSInteger)index {
-    
     if (!self.loopEnabled) {
         if (self.previousItemIndex >= _numberOfItems) return;
     }
@@ -246,7 +245,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 //右
 - (void)handleWithDirectionRight:(CGFloat)right leftValue:(CGFloat)left {
     UIView *willDismissView = [self findLeftOne];
-    BOOL willDimiss = (left > CGRectGetMaxX(willDismissView.frame)); //符合左端视图将要消失的条件
+    BOOL willDimiss = (left >= CGRectGetMaxX(willDismissView.frame)); //符合左端视图将要消失的条件
     if (willDimiss) {
         [self dequeueItemWithView:willDismissView];
     }
@@ -274,7 +273,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 //左
 - (void)handleWithDirectionLeft:(CGFloat)right leftValue:(CGFloat)left {
     UIView *view = [self findRightOne];
-    BOOL willDimiss = (right < CGRectGetMinX(view.frame)); //右端即将消失的条件
+    BOOL willDimiss = (right <= CGRectGetMinX(view.frame)); //右端即将消失的条件
     if (willDimiss) {
         [self dequeueItemWithView:view];
     }
@@ -303,7 +302,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 //底
 - (void)handleWithDirectionBottom:(CGFloat)bottom upValue:(CGFloat)up {
     UIView *willDismissView = [self findUpOne];
-    BOOL willDimiss = (up > CGRectGetMaxY(willDismissView.frame)); //符合顶端视图将要消失的条件
+    BOOL willDimiss = (up >= CGRectGetMaxY(willDismissView.frame)); //符合顶端视图将要消失的条件
     if (willDimiss) [self dequeueItemWithView:willDismissView];
     
     NSInteger willShowViewIndex = 0;
@@ -329,7 +328,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 //上
 - (void)handleWithDirectionUp:(CGFloat)bottom upValue:(CGFloat)up {
     UIView *view = [self findBottomOne];
-    BOOL willDimiss = (bottom < CGRectGetMinY(view.frame)); //底端即将消失的条件
+    BOOL willDimiss = (bottom <= CGRectGetMinY(view.frame)); //底端即将消失的条件
     if (willDimiss) [self dequeueItemWithView:view];
     
     NSInteger willShowViewIndex = 0;
@@ -369,7 +368,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 #pragma mark  ------<setter和getter>------
 
 - (NSInteger)currentIndex {
-    return self.previousItemIndex;
+    return [self findCurrentIndex];
 }
 
 - (void)setDataSource:(id<WKCScrollViewDataSource>)dataSource {
@@ -757,6 +756,46 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
     return bottomView;
 }
 
+- (NSInteger)findCurrentIndex {
+    CGFloat middle = MAXFLOAT;
+    NSInteger middleIndex = 0;
+    if (self.isAlignmentCenter) {
+        if (self.direction == scrollDirectionHorizontal) {
+            for (UIView * view in self.viewsPool) {
+                middle = MIN(middle, fabs(view.center.x - self.scrollView.contentOffset.x - self.scrollView.center.x));
+            }
+            for (UIView *view in self.viewsPool) {
+                if (fabs(view.center.x - self.scrollView.contentOffset.x - self.scrollView.center.x) == middle) {
+                    middleIndex = [[self findKeyWithView:view] integerValue];
+                }
+            }
+        }
+
+        if (self.direction == scrollDirectionVertical) {
+            for (UIView * view in self.viewsPool) {
+                middle = MIN(middle, fabs(view.center.y - self.scrollView.contentOffset.y - self.scrollView.center.y));
+            }
+            for (UIView *view in self.viewsPool) {
+                if (fabs(view.center.y - self.scrollView.contentOffset.y - self.scrollView.center.y) == middle) {
+                    middleIndex = [[self findKeyWithView:view] integerValue];
+                }
+            }
+        }
+    }
+    
+    if (!self.isAlignmentCenter) {
+        if (self.direction == scrollDirectionHorizontal) {
+            middleIndex = [[self findKeyWithView:[self findLeftOne]] integerValue];
+        }
+        
+        if (self.direction == scrollDirectionVertical) {
+            middleIndex = [[self findKeyWithView:[self findUpOne]] integerValue];
+        }
+    }
+    
+    return middleIndex;
+}
+
 - (void)reloadData {
     self.previousItemIndex = 0;
     self.recordContentOffset = CGPointZero;
@@ -827,7 +866,6 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 }
 
 - (void)autoAnimation {
-    NSLog(@"你妈隔壁");
     if (self.direction == scrollDirectionHorizontal) {
         if (self.autoScrollDirection == WKCScrollViewAutoScrollDirectionLeft) {
             [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x + self.pageWidth, 0) animated:YES];
