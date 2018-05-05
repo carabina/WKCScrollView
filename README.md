@@ -22,7 +22,7 @@ _scrollView.backgroundColor = [UIColor whiteColor];
 2. you need to set the `delegate` and `dataSource` to your controller or anyObject you want,and conform it's Protocol.
 ```
 _scrollView.dataSource = self;
-_scrollView.loopEnabled = YES;
+_scrollView.delegate = self;
 ```
 ```
 @interface WKCCommunityViewController ()<WKCScrollViewDelegate,WKCScrollViewDataSource>
@@ -78,19 +78,19 @@ return 25;
 - (void)WKCScrollViewDidScrollToTop:(WKCScrollView *)scrollView;
 - (void)WKCScrollView:(WKCScrollView *)scrollView didSelectItemAtIndex:(NSInteger)index;
 ```
-In this case, you had setted the view up.
+### In this case, you had setted the view up.
   ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/1.gif)
-When you set the property `isAlignmentCenter` is `YES`.
+### When you set the property `isAlignmentCenter` is `YES`.
  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/2.gif)
- When you set the property `loopEnabled` is `YES`.
+### When you set the property `loopEnabled` is `YES`.
  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/3.gif)
-  When you set the property `pagingEnabled` is `YES`.
+### When you set the property `pagingEnabled` is `YES`.
   ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/4.gif)
-  When you set the direction is `scrollDirectionVertical`.
+### When you set the direction is `scrollDirectionVertical`.
   ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/5.png)
-  When you set the property `isAutoScroll` is `YES`.
+### When you set the property `isAutoScroll` is `YES`.
    ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/6.gif)
-   When you set a different `autoScrollDirection`.
+### When you set a different `autoScrollDirection`.
    ```
   _scrollView.autoScrollDirection = WKCScrollViewAutoScrollDirectionRight;
 ```
