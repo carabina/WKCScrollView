@@ -86,8 +86,6 @@ return 25;
  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/3.gif)
 ### When you set the property `pagingEnabled` is `YES`.
   ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/4.gif)
-### When you set the direction is `scrollDirectionVertical`.
-  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/5.png)
 ### When you set the property `isAutoScroll` is `YES`.
    ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/6.gif)
 ### When you set a different `autoScrollDirection`.
