@@ -79,20 +79,19 @@ return 25;
 - (void)WKCScrollView:(WKCScrollView *)scrollView didSelectItemAtIndex:(NSInteger)index;
 ```
 ### In this case, you had setted the view up.
-  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/1.gif)
-### When you set the property `isAlignmentCenter` is `YES`.
+- [x] When you set the property `isAlignmentCenter` is `YES`.
  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/2.gif)
-### When you set the property `loopEnabled` is `YES`.
+- [x] When you set the property `loopEnabled` is `YES`.
  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/3.gif)
-### When you set the property `pagingEnabled` is `YES`.
+ - [x] When you set the property `pagingEnabled` is `YES`.
   ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/4.gif)
-### When you set the property `isAutoScroll` is `YES`.
+- [x] When you set the property `isAutoScroll` is `YES`.
    ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/6.gif)
-### When you set a different `autoScrollDirection`.
-   ```
+- [x] When you set a different `autoScrollDirection`.
+```
   _scrollView.autoScrollDirection = WKCScrollViewAutoScrollDirectionRight;
 ```
- ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/7.gif).
+![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/7.gif).
 
   
   
