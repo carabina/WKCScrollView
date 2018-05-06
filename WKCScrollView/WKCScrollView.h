@@ -40,6 +40,8 @@ typedef NS_ENUM(NSInteger,WKCScrollViewAutoScrollDirection) {
 @property (nonatomic, assign, readonly) NSInteger currentIndex;
 /**范围内的可视视图*/
 @property (nonatomic, strong, readonly) NSArray <UIView *>* visibleViews;
+/**背景图*/
+@property (nonatomic, strong) UIImage * backgroundImage;
 /**返回顶部*/
 @property (nonatomic, assign) BOOL scrollToTop;
 /**是否居中显示,默认NO*/
@@ -85,7 +87,7 @@ typedef NS_ENUM(NSInteger,WKCScrollViewAutoScrollDirection) {
 @protocol WKCScrollViewDelegate<NSObject>
 @optional;
 /**滑动*/
-- (void)WKCScrollViewDidScroll:(WKCScrollView *)scrollView contentOffset:(CGPoint)offset;
+- (void)WKCScrollViewDidScroll:(WKCScrollView *)scrollView contentOffset:(CGPoint)offset currentIndex:(NSInteger)index;
 /**将要拖拽*/
 - (void)WKCScrollViewWillBeginDragging:(WKCScrollView *)scrollView;
 /**已经停止拖拽*/

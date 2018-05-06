@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
     NSInteger _recordStartLeft;
 }
 
+@property (nonatomic, strong) UIImageView * backgroundImageView;
 @property (nonatomic, assign) CGFloat pageWidth;
 @property (nonatomic, assign) CGFloat pageHeight;
 @property (nonatomic, strong) UIScrollView * scrollView;
@@ -44,7 +45,6 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 @property (nonatomic, assign) CGFloat fixedCenterSpacing;
 @property (nonatomic, assign) CGPoint recordContentOffset;
 @property (nonatomic, strong) NSTimer * autoScrollTimer;
-
 
 @end
 
@@ -87,6 +87,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
     _recordStartLeft = 0;
     
     self.clipsToBounds = YES;
+    [self addSubview:self.backgroundImageView];
 }
 
 - (void)setUpScrollView {
@@ -106,6 +107,10 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
         if (_isSetLoopOffset) [self initWithViewsIndex:0]; //偏移完再初始化视图
     }
     if (!self.loopEnabled) [self initWithViewsIndex:0]; //直接初始化视图
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+     [self initWithContentSizeAndContentOffset:self.loopEnabled];
 }
 
 #pragma mark  ------<初始化视图>-------
@@ -130,9 +135,10 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
     }
     
     if (isViewContains) { //有记录
+        
         recodeView = [self.totalViews objectForKey:@(index)]; //去取相应的view
         [self recordContentSizeAndPoint]; //记录contentSize和_currentPoint
-        if (self.loopEnabled) {
+        if (self.loopEnabled) { //不循环直接取,循环需要重新赋坐标
             [self getWillShowViewFrame:recodeView]; //获取坐标
             [self queueItemView:recodeView withindex:index];//再变化再缓存
         }
@@ -148,8 +154,8 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
     }
     
     if (!self.loopEnabled) [self judgeScrollDirection:scrollView];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(WKCScrollViewDidScroll:contentOffset:)]) {
-        [self.delegate WKCScrollViewDidScroll:self contentOffset:self.recordContentOffset];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(WKCScrollViewDidScroll:contentOffset:currentIndex:)]) {
+        [self.delegate WKCScrollViewDidScroll:self contentOffset:self.recordContentOffset currentIndex:self.currentIndex];
     }
 
 }
@@ -264,6 +270,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
         }
         BOOL willRightViewShow = right > ((CGRectGetMaxX([self findRightOne].frame) + _currentInteritemSpacing));
         if (willRightViewShow) {
+            
             self.previousItemIndex = willShowViewIndex;
             [self initWithViewsIndex:self.previousItemIndex];
         }
@@ -367,6 +374,11 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 
 #pragma mark  ------<setter和getter>------
 
+- (void)setBackgroundImage:(UIImage *)backgroundImage {
+    _backgroundImage = backgroundImage;
+    if (backgroundImage) self.backgroundImageView.image = self.backgroundImage;
+}
+
 - (NSInteger)currentIndex {
     return [self findCurrentIndex];
 }
@@ -377,19 +389,19 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 }
 
 - (void)postDelegates {
-    if ([self.dataSource respondsToSelector:@selector(numberOfViewsInWKCScrollView:)]) {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(numberOfViewsInWKCScrollView:)]) {
         _numberOfItems = [self.dataSource numberOfViewsInWKCScrollView:self];
     }
 
-    if ([self.dataSource respondsToSelector:@selector(WKCScrollViewItemSize:)]) {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(WKCScrollViewItemSize:)]) {
         _itemSize = [self.dataSource WKCScrollViewItemSize:self];
     }
     
-    if ([self.dataSource respondsToSelector:@selector(interitemSpacingInWKCScrollView:)]) {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(interitemSpacingInWKCScrollView:)]) {
         _currentInteritemSpacing= [self.dataSource interitemSpacingInWKCScrollView:self];
     }
     
-    if ([self.dataSource respondsToSelector:@selector(lineSpacingInWKCScrollView:)]) {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(lineSpacingInWKCScrollView:)]) {
         _currentLineSpacing = [self.dataSource lineSpacingInWKCScrollView:self];
     }
 }
@@ -406,10 +418,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 
 - (void)setLoopEnabled:(BOOL)loopEnabled {
     _loopEnabled = loopEnabled;
-    if (self.isAutoScroll) {
-        _loopEnabled = YES;
-    }
-    [self initWithContentSizeAndContentOffset:loopEnabled];
+    if (self.isAutoScroll) _loopEnabled = YES;
 }
 
 - (void)setIsAutoScroll:(BOOL)isAutoScroll {
@@ -419,7 +428,7 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 
 - (void)setIsAlignmentCenter:(BOOL)isAlignmentCenter {
     _isAlignmentCenter = isAlignmentCenter;
-    [self initWithContentSizeAndContentOffset:self.loopEnabled];
+    [self setUpScrollView];
 }
 
 - (void)setDirection:(scrollDirection)direction {
@@ -438,7 +447,6 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
             self.autoScrollDirection = WKCScrollViewAutoScrollDirectionUp;
             break;
     }
-    [self initWithContentSizeAndContentOffset:self.loopEnabled];
 }
 
 - (BOOL)isDragging {
@@ -478,8 +486,8 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 
 //获取视图
 - (UIView *)postDelegateViewsWithIndex:(NSInteger)index {
-    if ([_dataSource respondsToSelector:@selector(WKCScrollView:viewAtIndex:)]) {
-        return [_dataSource WKCScrollView:self viewAtIndex:index];
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(WKCScrollView:viewAtIndex:)]) {
+        return [self.dataSource WKCScrollView:self viewAtIndex:index];
     }
     return nil;
 }
@@ -896,9 +904,21 @@ typedef NS_ENUM(NSInteger,currentScrollDirection) {
 
 #pragma mark ------<量初始化>-------
 
+- (UIImageView *)backgroundImageView {
+    if (!_backgroundImageView) {
+        _backgroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
+        _backgroundImageView.backgroundColor = [UIColor clearColor];
+        _backgroundImageView.clipsToBounds = YES;
+    }
+    return _backgroundImageView;
+}
+
 - (UIScrollView *)scrollView {
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] init];
+        _scrollView.contentSize = CGSizeZero;
+        _scrollView.contentOffset = CGPointZero;
         _scrollView.delegate = self;
         _scrollView.delaysContentTouches = NO;
         _scrollView.scrollEnabled = YES;

@@ -80,18 +80,21 @@ return 25;
 ```
 ### In this case, you had setted the view up.
 - [x] When you set the property `isAlignmentCenter` is `YES`.
- ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/2.gif)
+![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/2.gif)
 - [x] When you set the property `loopEnabled` is `YES`.
- ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/3.gif)
+![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/3.gif)
  - [x] When you set the property `pagingEnabled` is `YES`.
-  ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/4.gif)
+![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/4.gif)
 - [x] When you set the property `isAutoScroll` is `YES`.
-   ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/6.gif)
+![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/6.gif)
 - [x] When you set a different `autoScrollDirection`.
 ```
   _scrollView.autoScrollDirection = WKCScrollViewAutoScrollDirectionRight;
 ```
 ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/7.gif).
+For convenience，it has a WKCPageControlView which could be used as same as WKCScrollView.
+![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/8.gif).
+
 
   
   
