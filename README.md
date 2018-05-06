@@ -102,7 +102,71 @@ return 25;
 
 For convenience，it has a WKCPageControlView which could be used as same as WKCScrollView.
 
+`#import <WKCScrollView/WKCPageControlView.h>`
+
+The propertys are below.
+```
+@property (nonatomic, weak) id<WKCPageControlViewDataSource> dataSource;
+@property (nonatomic, assign) WKCPageControlViewPageAlignment alignment;
+@property (nonatomic, strong) UIImage * backgroundImage;
+@property (nonatomic, assign) NSInteger numberOfItem;
+@property (nonatomic, assign) CGSize currentItemSize;
+@property (nonatomic, assign) CGSize extraItemSize;
+@property (nonatomic, assign) CGFloat itemSpacing;
+@property (nonatomic, assign) CGFloat edgeSpaing;
+@property (nonatomic, assign) NSInteger currentIndex;
+```
+But the difference is it only has dataSource to set view up,no delegate methos called back.You can set  different view within `current` and `extra`.
+```
+- (NSInteger)numberOfViewsInWKCPageControlView:(WKCPageControlView *)pageControlView;
+- (__kindof UIView *)WKCPageControlViewForCurrentItem:(WKCPageControlView *)pageControlView;
+- (__kindof UIView *)WKCPageControlViewForExtraItem:(WKCPageControlView *)pageControlView;
+```
+1. setUp
+```
+- (WKCPageControlView *)pageControlView {
+    if (!_pageControlView) {
+       _pageControlView = [[WKCPageControlView alloc] initWithFrame:CGRectMake(0, 500, 375, 60)];
+       _pageControlView.dataSource = self;
+       _pageControlView.currentItemSize = CGSizeMake(50, 50);
+       _pageControlView.extraItemSize = CGSizeMake(30, 30);
+       _pageControlView.itemSpacing = 8;
+       _pageControlView.edgeSpaing = 15;
+       _pageControlView.alignment = WKCPageControlViewPageAlignmentCenter;
+      _pageControlView.backgroundColor = [UIColor greenColor];
+  }
+    return _pageControlView;
+}
+```
+2.  dataSource call back
+```
+- (NSInteger)numberOfViewsInWKCPageControlView:(WKCPageControlView *)pageControlView {
+     return self.dataSource.count;
+}
+
+- (UIView *)WKCPageControlViewForCurrentItem:(WKCPageControlView *)pageControlView {
+     UIView *view = [UIView new];
+     view.backgroundColor = [UIColor redColor];
+     return view;
+}
+
+- (UIView *)WKCPageControlViewForExtraItem:(WKCPageControlView *)pageControlView {
+     UIView *view = [UIView new];
+     view.backgroundColor = [UIColor grayColor];
+     return view;
+}
+```
+3. set `CurrentIndex` depend on your WKCScrollView.
+```
+- (void)WKCScrollViewDidEndDecelerating:(WKCScrollView *)scrollView {
+    [self.pageControlView setCurrentIndex:scrollView.currentIndex];
+}
+```
+
 ![Alt text](https://github.com/WeiKunChao/WKCScrollView/raw/master/screenShort/8.gif).
+
+
+
 
 
   
